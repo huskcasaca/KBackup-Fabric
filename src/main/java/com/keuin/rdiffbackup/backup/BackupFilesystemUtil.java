@@ -19,26 +19,26 @@ public final class BackupFilesystemUtil {
 
     private static final String BACKUP_SAVE_DIRECTORY_NAME = "backup";
     private static final String INCREMENTAL_BASE_DIRECTORY_NAME = "incremental";
-    private static final String BACKUP_FILE_NAME_PREFIX = "kbackup-";
+    private static final String BACKUP_PREFIX = "backup-";
 
     @Deprecated
-    public static String getBackupFileNamePrefix() {
-        return BACKUP_FILE_NAME_PREFIX;
+    public static String getBackupFilenamePrefix() {
+        return BACKUP_PREFIX;
     }
 
 
 //    @Deprecated
-//    public static String getBackupName(String backupFileName) {
+//    public static String getBackupName(String filename) {
 //        try {
-//            if (backupFileName.matches(backupFileNamePrefix + ".+\\.zip"))
-//                return backupFileName.substring(backupFileNamePrefix.length(), backupFileName.length() - 4);
+//            if (filename.matches(filenamePrefix + ".+\\.zip"))
+//                return filename.substring(filenamePrefix.length(), filename.length() - 4);
 //        } catch (IndexOutOfBoundsException ignored) {
 //        }
-//        return backupFileName;
+//        return filename;
 //    }
 
-    public static boolean isBackupFileExists(String backupFileName, MinecraftServer server) {
-        File backupFile = new File(getBackupSaveDirectory(server), backupFileName);
+    public static boolean isBackupFileExists(String filename, MinecraftServer server) {
+        File backupFile = new File(getBackupSaveDirectory(server), filename);
         return backupFile.isFile();
     }
 
@@ -67,15 +67,15 @@ public final class BackupFilesystemUtil {
     }
 
     @Deprecated
-    public static long getBackupTimeFromBackupFileName(String backupFileName) {
-        Matcher matcher = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}").matcher(backupFileName);
+    public static long getBackupTimeFromBackupFilename(String filename) {
+        Matcher matcher = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}").matcher(filename);
         if (matcher.find()) {
             String timeString = matcher.group(0);
             long timeStamp = BackupNameTimeFormatter.timeStringToEpochSeconds(timeString);
-            System.out.println(backupFileName + " -> " + timeStamp);
+            System.out.println(filename + " -> " + timeStamp);
             return timeStamp;
         } else {
-            System.err.println("Failed to extract time from " + backupFileName);
+            System.err.println("Failed to extract time from " + filename);
         }
         return -1;
     }

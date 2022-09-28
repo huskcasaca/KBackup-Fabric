@@ -1,7 +1,7 @@
 package com.keuin.rdiffbackup.backup.incremental.serializer;
 
 import com.keuin.rdiffbackup.backup.incremental.ObjectCollection2;
-import com.keuin.rdiffbackup.backup.name.BackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.BackupFilenameEncoder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,7 +17,7 @@ public class SavedIncBackupV0 implements SavedIncrementalBackup {
     private final String backupName;
     private final LocalDateTime namedBackupTime;
 
-    public SavedIncBackupV0(ObjectCollection2 objectCollection2, BackupFileNameEncoder.BackupBasicInformation backupBasicInformation) {
+    public SavedIncBackupV0(ObjectCollection2 objectCollection2, BackupFilenameEncoder.BackupBasicInformation backupBasicInformation) {
         Objects.requireNonNull(objectCollection2);
         Objects.requireNonNull(backupBasicInformation);
 

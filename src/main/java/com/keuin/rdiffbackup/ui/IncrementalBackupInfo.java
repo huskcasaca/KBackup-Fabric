@@ -62,7 +62,7 @@ public class IncrementalBackupInfo implements BackupInfo {
     }
 
     @Override
-    public String getBackupFileName() {
+    public String getBackupFilename() {
         return fileName;
     }
 }

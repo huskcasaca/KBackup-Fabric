@@ -32,6 +32,6 @@ public interface ConfiguredBackupMethod {
      *
      * @return the file name.
      */
-    String getBackupFileName();
+    String getBackupFilename();
 
 }

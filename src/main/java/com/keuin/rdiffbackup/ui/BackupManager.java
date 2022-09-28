@@ -46,7 +46,7 @@ public class BackupManager {
                     throw new RuntimeException("Cannot list files in backup directory.");
                 }
 
-                return new Iterator<BackupInfo>() {
+                return new Iterator<>() {
                     private final Iterator<File> fileIterator = Arrays.stream(backupFiles).filter(file -> {
                         String name = file.getName().toLowerCase();
                         return name.endsWith(".zip") || name.endsWith(".kbi");
@@ -62,6 +62,7 @@ public class BackupManager {
                         try {
                             File backupFile = fileIterator.next();
                             String fileName = backupFile.getName().toLowerCase();
+                            // TODO: 28/9/22 extract file extension
                             if (fileName.endsWith(".zip"))
                                 return PrimitiveBackupInfo.fromFile(backupFile);
                             if (fileName.endsWith(".kbi"))

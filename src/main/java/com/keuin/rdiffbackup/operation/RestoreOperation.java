@@ -28,9 +28,9 @@ public class RestoreOperation extends InvokableBlockingOperation {
     @Override
     protected boolean blockingContext() {
         // do restore to backupName
-        PrintUtil.broadcast(String.format("Restoring to backup %s ...", configuredBackupMethod.getBackupFileName()));
+        PrintUtil.broadcast(String.format("Restoring to backup %s ...", configuredBackupMethod.getBackupFilename()));
 
-        PrintUtil.debug("Backup file name: " + configuredBackupMethod.getBackupFileName());
+        PrintUtil.debug("Backup file name: " + configuredBackupMethod.getBackupFilename());
 
         PrintUtil.msgInfo(context, "Server will shutdown in a few seconds, depending on world size and disk speed, the progress may take from seconds to minutes.", true);
         PrintUtil.msgInfo(context, "Please do not force the server stop, or the level would be broken.", true);
@@ -56,7 +56,7 @@ public class RestoreOperation extends InvokableBlockingOperation {
 
     @Override
     public String toString() {
-        return String.format("restoration from %s", configuredBackupMethod.getBackupFileName());
+        return String.format("restoration from %s", configuredBackupMethod.getBackupFilename());
     }
 
     private class WorkerThread implements Runnable {

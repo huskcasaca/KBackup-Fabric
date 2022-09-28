@@ -8,8 +8,8 @@ import com.keuin.rdiffbackup.backup.incremental.manager.IncCopyResult;
 import com.keuin.rdiffbackup.backup.incremental.manager.IncrementalBackupStorageManager;
 import com.keuin.rdiffbackup.backup.incremental.serializer.IncBackupInfoSerializer;
 import com.keuin.rdiffbackup.backup.incremental.serializer.SavedIncrementalBackup;
-import com.keuin.rdiffbackup.backup.name.BackupFileNameEncoder;
-import com.keuin.rdiffbackup.backup.name.IncrementalBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.BackupFilenameEncoder;
+import com.keuin.rdiffbackup.backup.name.IncrementalBackupFilenameEncoder;
 import com.keuin.rdiffbackup.metadata.BackupMetadata;
 import com.keuin.rdiffbackup.operation.backup.feedback.IncrementalBackupFeedback;
 import com.keuin.rdiffbackup.util.FilesystemUtil;
@@ -29,15 +29,15 @@ import java.util.logging.Logger;
 
 public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod {
 
-    private final String backupIndexFileName;
+    private final String backupIndexFilename;
     private final String levelPath;
     private final String backupIndexFileSaveDirectory;
     private final String backupBaseDirectory;
 
     private static final Logger LOGGER = Logger.getLogger(ConfiguredIncrementalBackupMethod.class.getName());
 
-    public ConfiguredIncrementalBackupMethod(String backupIndexFileName, String levelPath, String backupIndexFileSaveDirectory, String backupBaseDirectory) {
-        this.backupIndexFileName = backupIndexFileName;
+    public ConfiguredIncrementalBackupMethod(String backupIndexFilename, String levelPath, String backupIndexFileSaveDirectory, String backupBaseDirectory) {
+        this.backupIndexFilename = backupIndexFilename;
         this.levelPath = levelPath;
         this.backupIndexFileSaveDirectory = backupIndexFileSaveDirectory;
         this.backupBaseDirectory = backupBaseDirectory;
@@ -73,7 +73,7 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
             PrintUtil.info("Saving index file...");
 
             // legacy index file
-//            ObjectCollectionSerializer.toFile(collection, new File(backupIndexFileSaveDirectory, backupIndexFileName));
+//            ObjectCollectionSerializer.toFile(collection, new File(backupIndexFileSaveDirectory, backupIndexFilename));
 
             // create directory
             final File indexDirectoryFile = new File(backupIndexFileSaveDirectory);
@@ -83,8 +83,8 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
                 throw new IOException("Backup index save directory does not exist and we failed to create it");
 
             // newer saved info (with metadata)
-            File indexFile = new File(backupIndexFileSaveDirectory, backupIndexFileName);
-            BackupFileNameEncoder.BackupBasicInformation info = IncrementalBackupFileNameEncoder.INSTANCE.decode(backupIndexFileName);
+            File indexFile = new File(backupIndexFileSaveDirectory, backupIndexFilename);
+            BackupFilenameEncoder.BackupBasicInformation info = IncrementalBackupFilenameEncoder.INSTANCE.decode(backupIndexFilename);
             IncBackupInfoSerializer.toFile(indexFile, SavedIncrementalBackup.newLatest(
                     collection,
                     info.customName,
@@ -108,7 +108,7 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
             LOGGER.severe("Failed to backup. Cleaning up...");
 
             // remove index file
-            File backupIndexFile = new File(backupIndexFileSaveDirectory, backupIndexFileName);
+            File backupIndexFile = new File(backupIndexFileSaveDirectory, backupIndexFilename);
             if (backupIndexFile.exists()) {
                 if (!backupIndexFile.delete()) {
                     LOGGER.warning("Failed to clean up: cannot delete file " + backupIndexFile.getName());
@@ -139,7 +139,7 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
         // load collection
         PrintUtil.info("Loading file list...");
         SavedIncrementalBackup info = IncBackupInfoSerializer.fromFile(
-                new File(backupIndexFileSaveDirectory, backupIndexFileName)
+                new File(backupIndexFileSaveDirectory, backupIndexFilename)
         );
 
         PrintUtil.info("Backup Info: " + info);
@@ -158,7 +158,7 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
         int restoreObjectCount = storageManager.restoreObjectCollection(info.getObjectCollection(), levelPathFile);
 
         // write metadata file
-        File metadataFile = new File(levelPathFile, BackupMetadata.metadataFileName);
+        File metadataFile = new File(levelPathFile, BackupMetadata.METADATA_FILENAME);
         try (FileOutputStream fos = new FileOutputStream(metadataFile)) {
             try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                 oos.writeObject(new BackupMetadata(info.getBackupTime().toEpochSecond() * 1000, info.getBackupName()));
@@ -182,8 +182,8 @@ public class ConfiguredIncrementalBackupMethod implements ConfiguredBackupMethod
     }
 
     @Override
-    public String getBackupFileName() {
-        return backupIndexFileName;
+    public String getBackupFilename() {
+        return backupIndexFilename;
     }
 
 

@@ -18,7 +18,7 @@ public final class CommandsRegister {
         // register /rdiff and /rdiff help for help menu
         dispatcher.register(CommandManager.literal("rdiff")
                 .requires(Permissions.require("rdiff.root", true))
-                .executes(Commands::kb));
+                .executes(Commands::rdiff));
         dispatcher.register(CommandManager.literal("rdiff")
                 .then(CommandManager.literal("help")
                         .requires(Permissions.require("rdiff.help", true))

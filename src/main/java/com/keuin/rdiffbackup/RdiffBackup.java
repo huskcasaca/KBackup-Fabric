@@ -65,7 +65,7 @@ public final class RdiffBackup implements ModInitializer {
         // Check if we have just recovered from a previous backup. If so, print message.
         try {
             File levelDirectory = new File(server.getRunDirectory(), ((MinecraftDedicatedServer) server).getLevelName());
-            File metadataFile = new File(levelDirectory, BackupMetadata.metadataFileName);
+            File metadataFile = new File(levelDirectory, BackupMetadata.METADATA_FILENAME);
             if (metadataFile.exists()) {
                 // Metadata exists. Deserialize.
                 BackupMetadata metadata;
@@ -78,8 +78,8 @@ public final class RdiffBackup implements ModInitializer {
                 // Print metadata
                 MetadataHolder.setMetadata(metadata);
                 PrintUtil.info("Restored world from a previous backup:");
-                PrintUtil.info("Backup Name: " + metadata.getBackupName());
-                PrintUtil.info("Create Time: " + DateUtil.fromEpochMillis(metadata.getBackupTime()));
+                PrintUtil.info("Backup Name: " + metadata.getName());
+                PrintUtil.info("Create Time: " + DateUtil.fromEpochMillis(metadata.getTime()));
 
                 // Delete metadata file
                 if (!metadataFile.delete()) {

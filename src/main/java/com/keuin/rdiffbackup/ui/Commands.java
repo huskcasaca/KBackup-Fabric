@@ -1,8 +1,8 @@
 package com.keuin.rdiffbackup.ui;
 
 import com.keuin.rdiffbackup.backup.BackupFilesystemUtil;
-import com.keuin.rdiffbackup.backup.name.IncrementalBackupFileNameEncoder;
-import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.IncrementalBackupFilenameEncoder;
+import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFilenameEncoder;
 import com.keuin.rdiffbackup.backup.suggestion.BackupNameSuggestionProvider;
 import com.keuin.rdiffbackup.metadata.MetadataHolder;
 import com.keuin.rdiffbackup.operation.BackupOperation;
@@ -88,14 +88,14 @@ public final class Commands {
      * @param context the context.
      * @return stat code.
      */
-    public static int kb(CommandContext<ServerCommandSource> context) {
+    public static int rdiff(CommandContext<ServerCommandSource> context) {
         int statCode = list(context);
         if (MetadataHolder.hasMetadata() && !notifiedPreviousRestoration) {
             // Output metadata info
             notifiedPreviousRestoration = true;
             msgStress(context, "Restored from backup "
-                    + MetadataHolder.getMetadata().getBackupName() + " (created at " +
-                    DateUtil.fromEpochMillis(MetadataHolder.getMetadata().getBackupTime())
+                    + MetadataHolder.getMetadata().getName() + " (created at " +
+                    DateUtil.fromEpochMillis(MetadataHolder.getMetadata().getTime())
                     + ")");
         }
         return statCode;
@@ -126,7 +126,7 @@ public final class Commands {
         // TODO: refactor this to use {@link ObjectCollectionSerializer#fromDirectory}
 //        File[] files = getBackupSaveDirectory(server).listFiles(
 //                (dir, name) -> dir.isDirectory() &&
-//                        (name.toLowerCase().endsWith(".zip") && name.toLowerCase().startsWith(getBackupFileNamePrefix())
+//                        (name.toLowerCase().endsWith(".zip") && name.toLowerCase().startsWith(getBackupFilenamePrefix())
 //                                || name.toLowerCase().endsWith(".kbi"))
 //        );
 
@@ -159,9 +159,9 @@ public final class Commands {
 //                int i = 0;
 //                for (File file : files) {
 //                    ++i;
-//                    String backupFileName = file.getName();
+//                    String filename = file.getName();
 //                    msgInfo(context, String.format("[%d] %s", i, backupInformationProvider.apply(file)));
-//                    backupFileNameList.add(backupFileName);
+//                    filenameList.add(filename);
 //                }
 //            } else {
 //                msgErr(context, "Error: failed to list files in backup folder.");
@@ -254,14 +254,14 @@ public final class Commands {
      */
     public static int delete(CommandContext<ServerCommandSource> context) {
 
-        String backupFileName = parseBackupFileName(context, StringArgumentType.getString(context, "backupName"));
+        String filename = parseBackupFilename(context, StringArgumentType.getString(context, "backupName"));
         MinecraftServer server = context.getSource().getServer();
 
-        if (backupFileName == null)
+        if (filename == null)
             return list(context); // Show the list and return
 
         // Validate backupName
-        if (!isBackupFileExists(backupFileName, server)) {
+        if (!isBackupFileExists(filename, server)) {
             // Invalid backupName
             msgErr(context, "Invalid backup name! Please check your input. The list index number is also valid.");
             return FAILED;
@@ -269,9 +269,9 @@ public final class Commands {
 
         // Update pending task
         //pendingOperation = AbstractConfirmableOperation.createDeleteOperation(context, backupName);
-        pendingOperation = new DeleteOperation(context, backupFileName);
+        pendingOperation = new DeleteOperation(context, filename);
 
-        msgWarn(context, String.format("DELETION WARNING: The deletion is irreversible! You will lose the backup %s permanently. Use /rdiff confirm to start or /rdiff cancel to abort.", backupFileName), true);
+        msgWarn(context, String.format("DELETION WARNING: The deletion is irreversible! You will lose the backup %s permanently. Use /rdiff confirm to start or /rdiff cancel to abort.", filename), true);
         return SUCCESS;
     }
 
@@ -287,14 +287,14 @@ public final class Commands {
         try {
             //KBMain.restore("name")
             MinecraftServer server = context.getSource().getServer();
-            String backupFileName = parseBackupFileName(context, StringArgumentType.getString(context, "backupName"));
-//            backupFileName = parseBackupFileName(context, backupFileName);
+            String filename = parseBackupFilename(context, StringArgumentType.getString(context, "backupName"));
+//            filename = parseBackupFilename(context, filename);
 
-            if (backupFileName == null)
+            if (filename == null)
                 return list(context); // Show the list and return
 
             // Validate backupName
-            if (!isBackupFileExists(backupFileName, server)) {
+            if (!isBackupFileExists(filename, server)) {
                 // Invalid backupName
                 msgErr(context, "Invalid backup name! Please check your input. The list index number is also valid.", false);
                 return FAILED;
@@ -304,21 +304,21 @@ public final class Commands {
 
             // Update pending task
             //pendingOperation = AbstractConfirmableOperation.createRestoreOperation(context, backupName);
-//        File backupFile = new File(getBackupSaveDirectory(server), getBackupFileName(backupName));
+//        File backupFile = new File(getBackupSaveDirectory(server), getBackupFilename(backupName));
             // TODO: improve this
-            ConfiguredBackupMethod method = backupFileName.endsWith(".zip") ?
+            ConfiguredBackupMethod method = filename.endsWith(".zip") ?
                     new ConfiguredPrimitiveBackupMethod(
-                            backupFileName, getLevelPath(server), getBackupSaveDirectory(server).getAbsolutePath()
+                            filename, getLevelPath(server), getBackupSaveDirectory(server).getAbsolutePath()
                     ) : new ConfiguredIncrementalBackupMethod(
-                    backupFileName, getLevelPath(server),
+                    filename, getLevelPath(server),
                     getBackupSaveDirectory(server).getAbsolutePath(),
                     getIncrementalBackupBaseDirectory(server).getAbsolutePath()
             );
-            // String backupSavePath, String levelPath, String backupFileName
-//        getBackupSaveDirectory(server).getAbsolutePath(), getLevelPath(server), backupFileName
+            // String backupSavePath, String levelPath, String filename
+//        getBackupSaveDirectory(server).getAbsolutePath(), getLevelPath(server), filename
             pendingOperation = new RestoreOperation(context, method);
 
-            msgWarn(context, String.format("RESET WARNING: You will LOSE YOUR CURRENT WORLD PERMANENTLY! The worlds will be replaced with backup %s . Use /rdiff confirm to start or /rdiff cancel to abort.", backupFileName), true);
+            msgWarn(context, String.format("RESET WARNING: You will LOSE YOUR CURRENT WORLD PERMANENTLY! The worlds will be replaced with backup %s . Use /rdiff confirm to start or /rdiff cancel to abort.", filename), true);
             return SUCCESS;
         } catch (IOException e) {
             msgErr(context, String.format("An I/O exception occurred while making backup: %s", e));
@@ -346,11 +346,11 @@ public final class Commands {
             // configure backup method
             MinecraftServer server = context.getSource().getServer();
             ConfiguredBackupMethod method = !incremental ? new ConfiguredPrimitiveBackupMethod(
-                    PrimitiveBackupFileNameEncoder.INSTANCE.encode(customBackupName, LocalDateTime.now()),
+                    PrimitiveBackupFilenameEncoder.INSTANCE.encode(customBackupName, LocalDateTime.now()),
                     getLevelPath(server),
                     getBackupSaveDirectory(server).getCanonicalPath()
             ) : new ConfiguredIncrementalBackupMethod(
-                    IncrementalBackupFileNameEncoder.INSTANCE.encode(customBackupName, LocalDateTime.now()),
+                    IncrementalBackupFilenameEncoder.INSTANCE.encode(customBackupName, LocalDateTime.now()),
                     getLevelPath(server),
                     getBackupSaveDirectory(server).getCanonicalPath(),
                     getIncrementalBackupBaseDirectory(server).getCanonicalPath()
@@ -424,15 +424,15 @@ public final class Commands {
             updateBackupList();
 //            MinecraftServer server = context.getSource().getMinecraftServer();
 //            List<File> files = Arrays.asList(Objects.requireNonNull(getBackupSaveDirectory(server).listFiles()));
-//            files.removeIf(f -> !f.getName().startsWith(BackupFilesystemUtil.getBackupFileNamePrefix()));
-//            files.sort((x, y) -> (int) (BackupFilesystemUtil.getBackupTimeFromBackupFileName(y.getName()) - BackupFilesystemUtil.getBackupTimeFromBackupFileName(x.getName())));
+//            files.removeIf(f -> !f.getName().startsWith(BackupFilesystemUtil.getfilenamePrefix()));
+//            files.sort((x, y) -> (int) (BackupFilesystemUtil.getBackupTimeFromfilename(y.getName()) - BackupFilesystemUtil.getBackupTimeFromfilename(x.getName())));
 //            File prevBackupFile = files.get(0);
-//            String backupFileName = prevBackupFile.getName();
+//            String filename = prevBackupFile.getName();
 //            int i;
 //            synchronized (backupList) {
-//                i = backupList.indexOf(backupFileName);
+//                i = backupList.indexOf(filename);
 //                if (i == -1) {
-//                    backupList.add(backupFileName);
+//                    backupList.add(filename);
 //                    i = backupList.size();
 //                } else {
 //                    ++i;
@@ -454,10 +454,10 @@ public final class Commands {
         return SUCCESS;
     }
 
-//    private static String getPrimitiveBackupInformationString(String backupFileName, long backupFileSizeBytes) {
+//    private static String getPrimitiveBackupInformationString(String filename, long backupFileSizeBytes) {
 //        return String.format(
 //                "(ZIP) %s , size: %s",
-//                PrimitiveBackupFileNameEncoder.INSTANCE.decode(backupFileName),
+//                PrimitivefilenameEncoder.INSTANCE.decode(filename),
 //                getFriendlyFileSizeString(backupFileSizeBytes)
 //        );
 //    }
@@ -496,7 +496,7 @@ public final class Commands {
 //    }
 
 
-    private static String parseBackupFileName(CommandContext<ServerCommandSource> context, String userInput) {
+    private static String parseBackupFilename(CommandContext<ServerCommandSource> context, String userInput) {
         try {
             String backupName = StringArgumentType.getString(context, "backupName");
 
@@ -504,7 +504,7 @@ public final class Commands {
                 // treat numeric input as backup index number in list
                 int index = Integer.parseInt(backupName) - 1;
                 synchronized (backupList) {
-                    return backupList.get(index).getBackupFileName(); // Replace input number with real backup file name.
+                    return backupList.get(index).getBackupFilename(); // Replace input number with real backup file name.
                 }
             }
         } catch (NumberFormatException | IndexOutOfBoundsException ignored) {

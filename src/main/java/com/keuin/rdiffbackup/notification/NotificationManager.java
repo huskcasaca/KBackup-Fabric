@@ -38,9 +38,9 @@ public class NotificationManager {
             BackupMetadata backup = MetadataHolder.getMetadata();
             notifiable.notify(
                     Text.literal("The world has been restored to backup ")
-                            .append(Text.literal("[" + backup.getBackupName() + "]").setStyle(Style.EMPTY.withColor(Formatting.GREEN)))
+                            .append(Text.literal("[" + backup.getName() + "]").setStyle(Style.EMPTY.withColor(Formatting.GREEN)))
                             .append(Text.literal(" (created at "))
-                            .append(Text.literal("[" + DateUtil.fromEpochMillis(backup.getBackupTime()) + "]").setStyle(Style.EMPTY.withColor(Formatting.GREEN)))
+                            .append(Text.literal("[" + DateUtil.fromEpochMillis(backup.getTime()) + "]").setStyle(Style.EMPTY.withColor(Formatting.GREEN)))
                             .append(Text.literal(")"))
             );
         }

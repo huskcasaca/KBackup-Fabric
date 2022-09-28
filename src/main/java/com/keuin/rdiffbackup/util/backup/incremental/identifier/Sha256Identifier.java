@@ -30,13 +30,13 @@ public class Sha256Identifier extends SingleHashIdentifier {
     /**
      * Load sha-256 from a named file. Only used in StorageObjectLoader.
      *
-     * @param fileName the file name.
+     * @param filename the file name.
      * @return identifier.
      */
-    static Sha256Identifier fromFileName(String fileName) {
-        if (!fileName.matches(marker + "-[0-9A-Fa-f]{32}"))
+    static Sha256Identifier fromFilename(String filename) {
+        if (!filename.matches(marker + "-[0-9A-Fa-f]{32}"))
             return null;
-        String hexString = fileName.substring(marker.length() + 1);
+        String hexString = filename.substring(marker.length() + 1);
         return new Sha256Identifier(BytesUtil.hexToBytes(hexString));
     }
 

@@ -1,26 +1,29 @@
 package com.keuin.rdiffbackup.metadata;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * WARNING: DO NOT modify this class, or the plugin will be incompatible with backups created by older versions.
  */
 public class BackupMetadata implements Serializable {
-    public static final String metadataFileName = "kbackup_metadata";
+    public static final String METADATA_FILENAME = "backup_metadata";
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    private final long BackupTime;
-    private final String backupName;
+    private final long time;
+    private final String name;
 
-    public BackupMetadata(long backupTime, String backupName) {
-        BackupTime = backupTime;
-        this.backupName = backupName;
+    public BackupMetadata(long time, String name) {
+        this.time = time;
+        this.name = name;
     }
 
-    public long getBackupTime() {
-        return BackupTime;
+    public long getTime() {
+        return time;
     }
 
-    public String getBackupName() {
-        return backupName;
+    public String getName() {
+        return name;
     }
 }

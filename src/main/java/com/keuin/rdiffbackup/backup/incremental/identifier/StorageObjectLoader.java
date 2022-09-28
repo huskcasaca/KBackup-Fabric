@@ -15,7 +15,7 @@ public class StorageObjectLoader {
         String fileName = file.getName();
         ObjectIdentifier identifier;
 
-        identifier = Sha256Identifier.fromFileName(fileName);
+        identifier = Sha256Identifier.fromFilename(fileName);
         return identifier;
 
         // Add more identifiers.

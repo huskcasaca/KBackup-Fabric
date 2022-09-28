@@ -26,18 +26,18 @@ import static org.apache.commons.io.FileUtils.forceDelete;
 public class DeleteOperation extends InvokableAsyncBlockingOperation {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteOperation.class.getName());
-    private final String backupFileName;
+    private final String backupFilename;
     private final CommandContext<ServerCommandSource> context;
 
-    public DeleteOperation(CommandContext<ServerCommandSource> context, String backupFileName) {
+    public DeleteOperation(CommandContext<ServerCommandSource> context, String backupFilename) {
         super("BackupDeletingWorker");
-        this.backupFileName = backupFileName;
+        this.backupFilename = backupFilename;
         this.context = context;
     }
 
     @Override
     public String toString() {
-        return String.format("deletion of %s", backupFileName);
+        return String.format("deletion of %s", backupFilename);
     }
 
     @Override
@@ -49,19 +49,19 @@ public class DeleteOperation extends InvokableAsyncBlockingOperation {
     private void delete() {
         try {
             MinecraftServer server = context.getSource().getServer();
-            PrintUtil.info("Deleting backup file " + this.backupFileName);
-            File backupFile = new File(getBackupSaveDirectory(server), backupFileName);
+            PrintUtil.info("Deleting backup file " + this.backupFilename);
+            File backupFile = new File(getBackupSaveDirectory(server), backupFilename);
             SavedIncrementalBackup incrementalBackup = null;
             if (backupFile.getName().endsWith(".kbi")) {
                 incrementalBackup = IncBackupInfoSerializer.fromFile(backupFile);
             }
 
             // remove .zip or .kbi file
-            PrintUtil.info("Deleting file " + backupFileName + "...");
+            PrintUtil.info("Deleting file " + backupFilename + "...");
             int tryCounter = 0;
             do {
                 if (tryCounter == 5) {
-                    String msg = "Failed to delete file " + backupFileName;
+                    String msg = "Failed to delete file " + backupFilename;
                     PrintUtil.error(msg);
                     msgErr(context, msg);
                     return;
@@ -87,8 +87,8 @@ public class DeleteOperation extends InvokableAsyncBlockingOperation {
                 PrintUtil.info("Deleted " + deleted + " unused file(s).");
             }
 
-            PrintUtil.info("Successfully deleted backup file " + this.backupFileName);
-            msgInfo(context, "Successfully deleted backup file " + this.backupFileName);
+            PrintUtil.info("Successfully deleted backup file " + this.backupFilename);
+            msgInfo(context, "Successfully deleted backup file " + this.backupFilename);
         } catch (IOException e) {
             LOGGER.severe("Failed to delete backup: " + e);
         }

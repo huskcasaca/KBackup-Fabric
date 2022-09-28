@@ -30,5 +30,5 @@ public interface BackupInfo {
      * @return the backup file name.
      */
     @Deprecated
-    String getBackupFileName();
+    String getBackupFilename();
 }

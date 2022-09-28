@@ -27,7 +27,7 @@ public final class ZipUtil {
         }
 
         boolean skipping = Optional.ofNullable(filesSkipping).orElse(Collections.emptySet()).contains(file.getName())
-                || file.getName().equals(BackupMetadata.metadataFileName);
+                || file.getName().equals(BackupMetadata.METADATA_FILENAME);
         if (skipping)
             return; // Reject
 
@@ -69,14 +69,14 @@ public final class ZipUtil {
      *
      * @param srcPath     要压缩的源文件路径。如果是目录，则将递归压缩这个目录及其所有子文件、子目录树。
      * @param zipPath     压缩文件保存的路径。注意：zipPath不能是srcPath路径下的子文件夹
-     * @param zipFileName 压缩文件名
+     * @param zipFilename 压缩文件名
      * @throws IOException      IO Error
      * @throws ZipUtilException General exception, such as loop recursion.
      */
-    public static void makeBackupZip(String srcPath, String zipPath, String zipFileName, BackupMetadata backupMetadata, int zipLevel) throws IOException, ZipUtilException {
+    public static void makeBackupZip(String srcPath, String zipPath, String zipFilename, BackupMetadata backupMetadata, int zipLevel) throws IOException, ZipUtilException {
         Objects.requireNonNull(srcPath);
         Objects.requireNonNull(zipPath);
-        Objects.requireNonNull(zipFileName);
+        Objects.requireNonNull(zipFilename);
         Objects.requireNonNull(backupMetadata);
         Objects.requireNonNull(srcPath);
         if (srcPath.isEmpty()) {
@@ -85,8 +85,8 @@ public final class ZipUtil {
         if (zipPath.isEmpty()) {
             throw new IllegalArgumentException("zipPath cannot be empty");
         }
-        if (zipFileName.isEmpty()) {
-            throw new IllegalArgumentException("zipFileName cannot be empty");
+        if (zipFilename.isEmpty()) {
+            throw new IllegalArgumentException("zipFilename cannot be empty");
         }
 
         File srcFile = new File(srcPath);
@@ -105,7 +105,7 @@ public final class ZipUtil {
         }
 
         //创建压缩文件保存的文件对象
-        String zipFilePath = zipPath + File.separator + zipFileName;
+        String zipFilePath = zipPath + File.separator + zipFilename;
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
             //删除已存在的目标文件
@@ -120,7 +120,7 @@ public final class ZipUtil {
             zipOutputStream.setLevel(zipLevel);
 
             // If with backup metadata, we serialize it and write it into file "kbackup_metadata"
-            ZipEntry metadataEntry = new ZipEntry(BackupMetadata.metadataFileName);
+            ZipEntry metadataEntry = new ZipEntry(BackupMetadata.METADATA_FILENAME);
 
             zipOutputStream.putNextEntry(metadataEntry);
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -146,8 +146,8 @@ public final class ZipUtil {
         }
     }
 
-    public static void makeBackupZip(String srcPath, String zipPath, String zipFileName, BackupMetadata backupMetadata) throws IOException, ZipUtilException {
-        makeBackupZip(srcPath, zipPath, zipFileName, backupMetadata, Deflater.BEST_SPEED);
+    public static void makeBackupZip(String srcPath, String zipPath, String zipFilename, BackupMetadata backupMetadata) throws IOException, ZipUtilException {
+        makeBackupZip(srcPath, zipPath, zipFilename, backupMetadata, Deflater.BEST_SPEED);
     }
 
     /**
@@ -155,16 +155,16 @@ public final class ZipUtil {
      *
      * @param zipFilePath        zip文件的全路径
      * @param unzipFilePath      解压后的文件保存的路径
-     * @param includeZipFileName 解压后的文件保存的路径是否包含压缩文件的文件名。true-包含；false-不包含
+     * @param includeZipFilename 解压后的文件保存的路径是否包含压缩文件的文件名。true-包含；false-不包含
      */
-    public static void unzip(String zipFilePath, String unzipFilePath, boolean includeZipFileName) throws IOException {
+    public static void unzip(String zipFilePath, String unzipFilePath, boolean includeZipFilename) throws IOException {
         final byte[] buffer = new byte[unzipBufferSize];
         if (zipFilePath.isEmpty() || unzipFilePath.isEmpty()) {
             throw new IllegalArgumentException("Parameter for unzip() contains null.");
         }
         File zipFile = new File(zipFilePath);
         // 如果解压后的文件保存路径包含压缩文件的文件名，则追加该文件名到解压路径
-        if (includeZipFileName) {
+        if (includeZipFilename) {
             String fileName = zipFile.getName();
             if (!fileName.isEmpty()) {
                 fileName = fileName.substring(0, fileName.lastIndexOf("."));

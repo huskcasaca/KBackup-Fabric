@@ -2,7 +2,7 @@ package com.keuin.rdiffbackup.operation.backup.method;
 
 import com.keuin.rdiffbackup.backup.BackupFilesystemUtil;
 import com.keuin.rdiffbackup.backup.BackupNameTimeFormatter;
-import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFilenameEncoder;
 import com.keuin.rdiffbackup.exception.ZipUtilException;
 import com.keuin.rdiffbackup.metadata.BackupMetadata;
 import com.keuin.rdiffbackup.operation.backup.feedback.PrimitiveBackupFeedback;
@@ -19,22 +19,22 @@ import java.util.logging.Logger;
 
 public class ConfiguredPrimitiveBackupMethod implements ConfiguredBackupMethod {
 
-    private final String backupFileName;
+    private final String filename;
     private final String levelPath;
-    private final String backupSavePath;
+    private final String backupPath;
 
     private final Logger LOGGER = Logger.getLogger(ConfiguredPrimitiveBackupMethod.class.getName());
 
-    public ConfiguredPrimitiveBackupMethod(String backupFileName, String levelPath, String backupSavePath) {
-        this.backupFileName = backupFileName;
+    public ConfiguredPrimitiveBackupMethod(String filename, String levelPath, String backupPath) {
+        this.filename = filename;
         this.levelPath = levelPath;
-        this.backupSavePath = backupSavePath;
+        this.backupPath = backupPath;
     }
 
     @Deprecated
-    private String getBackupFileName(LocalDateTime time, String backupName) {
+    private String getBackupFilename(LocalDateTime time, String backupName) {
         String timeString = BackupNameTimeFormatter.localDateTimeToString(time);
-        return String.format("%s%s_%s%s", BackupFilesystemUtil.getBackupFileNamePrefix(), timeString, backupName, ".zip");
+        return String.format("%s%s_%s%s", BackupFilesystemUtil.getBackupFilenamePrefix(), timeString, backupName, ".zip");
     }
 
     @Override
@@ -43,13 +43,13 @@ public class ConfiguredPrimitiveBackupMethod implements ConfiguredBackupMethod {
         PrimitiveBackupFeedback feedback;
 
         try {
-            String customBackupName = PrimitiveBackupFileNameEncoder.INSTANCE.decode(backupFileName).customName;
+            String customBackupName = PrimitiveBackupFilenameEncoder.INSTANCE.decode(filename).customName;
             BackupMetadata backupMetadata = new BackupMetadata(System.currentTimeMillis(), customBackupName);
-            PrintUtil.info(String.format("zip(srcPath=%s, destPath=%s)", levelPath, backupSavePath));
+            PrintUtil.info(String.format("zip(srcPath=%s, destPath=%s)", levelPath, backupPath));
             PrintUtil.info("Compressing level ...");
-            ZipUtil.makeBackupZip(levelPath, backupSavePath, backupFileName, backupMetadata);
+            ZipUtil.makeBackupZip(levelPath, backupPath, filename, backupMetadata);
             feedback = PrimitiveBackupFeedback.createSuccessFeedback(
-                    FilesystemUtil.getFileSizeBytes(backupSavePath, backupFileName));
+                    FilesystemUtil.getFileSizeBytes(backupPath, filename));
         } catch (ZipUtilException exception) {
             String msg = "Infinite recursive of directory tree detected, backup was aborted.";
             PrintUtil.info(msg);
@@ -60,7 +60,7 @@ public class ConfiguredPrimitiveBackupMethod implements ConfiguredBackupMethod {
 
         if (!feedback.isSuccess()) {
             // do clean-up if failed
-            File backupFile = new File(backupSavePath, backupFileName);
+            File backupFile = new File(backupPath, filename);
             if (backupFile.exists()) {
                 LOGGER.info(String.format("Deleting incomplete backup file \"%s\"...", backupFile.getPath()));
                 try {
@@ -85,20 +85,20 @@ public class ConfiguredPrimitiveBackupMethod implements ConfiguredBackupMethod {
 
         // Decompress archive
         PrintUtil.info("Decompressing archived level ...");
-        ZipUtil.unzip(Paths.get(backupSavePath, backupFileName).toString(), levelPath, false);
+        ZipUtil.unzip(Paths.get(backupPath, filename).toString(), levelPath, false);
 
         return true;
     }
 
     @Override
     public boolean touch() {
-        File backupSaveDirectoryFile = new File(backupSavePath);
+        File backupSaveDirectoryFile = new File(backupPath);
         return backupSaveDirectoryFile.isDirectory() || backupSaveDirectoryFile.mkdir();
     }
 
     @Override
-    public String getBackupFileName() {
-        return backupFileName;
+    public String getBackupFilename() {
+        return filename;
     }
 
 }

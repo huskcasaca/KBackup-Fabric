@@ -1,7 +1,7 @@
 package com.keuin.rdiffbackup.ui;
 
-import com.keuin.rdiffbackup.backup.name.BackupFileNameEncoder;
-import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.BackupFilenameEncoder;
+import com.keuin.rdiffbackup.backup.name.PrimitiveBackupFilenameEncoder;
 import com.keuin.rdiffbackup.operation.backup.method.ConfiguredBackupMethod;
 import com.keuin.rdiffbackup.util.FilesystemUtil;
 import net.minecraft.server.MinecraftServer;
@@ -16,19 +16,19 @@ public class PrimitiveBackupInfo implements BackupInfo {
     private final String name;
     private final LocalDateTime creationTime;
     private final long sizeBytes;
-    private final String fileName;
+    private final String filename;
 
     @Deprecated
     private PrimitiveBackupInfo(String name, LocalDateTime creationTime, long sizeBytes) {
         this.name = name;
         this.creationTime = creationTime;
         this.sizeBytes = sizeBytes;
-        this.fileName = PrimitiveBackupFileNameEncoder.INSTANCE.encode(name, creationTime);
+        this.filename = PrimitiveBackupFilenameEncoder.INSTANCE.encode(name, creationTime);
     }
 
-    private PrimitiveBackupInfo(String fileName, long sizeBytes) {
-        this.fileName = fileName;
-        BackupFileNameEncoder.BackupBasicInformation info = PrimitiveBackupFileNameEncoder.INSTANCE.decode(fileName);
+    private PrimitiveBackupInfo(String filename, long sizeBytes) {
+        this.filename = filename;
+        BackupFilenameEncoder.BackupBasicInformation info = PrimitiveBackupFilenameEncoder.INSTANCE.decode(filename);
         if (info == null)
             throw new IllegalArgumentException("Invalid file name.");
         this.name = info.customName;
@@ -39,7 +39,7 @@ public class PrimitiveBackupInfo implements BackupInfo {
     public static PrimitiveBackupInfo fromFile(File zipFile) {
         // TODO: fix this, use metadata file instead
 //        fileName = zipFile.getName();
-//        BackupFileNameEncoder.BackupBasicInformation info = PrimitiveBackupFileNameEncoder.INSTANCE.decode(fileName);
+//        BackupFilenameEncoder.BackupBasicInformation info = PrimitiveBackupFilenameEncoder.INSTANCE.decode(fileName);
 //        if (info == null)
 //            throw new IllegalArgumentException("Invalid file name.");
 //        return new PrimitiveBackupInfo(info.customName, info.time, FilesystemUtil.getFileSizeBytes(zipFile));
@@ -72,7 +72,7 @@ public class PrimitiveBackupInfo implements BackupInfo {
     }
 
     @Override
-    public String getBackupFileName() {
-        return fileName;
+    public String getBackupFilename() {
+        return filename;
     }
 }

@@ -4,7 +4,7 @@ import com.keuin.rdiffbackup.backup.incremental.ObjectCollection2;
 import com.keuin.rdiffbackup.backup.incremental.ObjectCollectionFactory;
 import com.keuin.rdiffbackup.backup.incremental.ObjectCollectionSerializer;
 import com.keuin.rdiffbackup.backup.incremental.identifier.Sha256Identifier;
-import com.keuin.rdiffbackup.backup.name.IncrementalBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.IncrementalBackupFilenameEncoder;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class IncBakupBackwardCompatibilityTest {
     private final LocalDateTime backupTime = LocalDateTime.of(2000, 1, 1, 1, 1, 1, 1);
 
     private final Path testRoot = Paths.get(".\\testfile\\IncBackupBackwardCompatibilityTest");
-    private final File indexFile = new File(testRoot.toString(), IncrementalBackupFileNameEncoder.INSTANCE.encode(customName, backupTime));
+    private final File indexFile = new File(testRoot.toString(), IncrementalBackupFilenameEncoder.INSTANCE.encode(customName, backupTime));
 
     @Test
     public void testBackwardCompatibility() throws IOException {

@@ -2,8 +2,8 @@ package com.keuin.rdiffbackup.backup.incremental.serializer;
 
 import com.keuin.rdiffbackup.backup.incremental.ObjectCollection2;
 import com.keuin.rdiffbackup.backup.incremental.ObjectCollectionConverter;
-import com.keuin.rdiffbackup.backup.name.BackupFileNameEncoder;
-import com.keuin.rdiffbackup.backup.name.IncrementalBackupFileNameEncoder;
+import com.keuin.rdiffbackup.backup.name.BackupFilenameEncoder;
+import com.keuin.rdiffbackup.backup.name.IncrementalBackupFilenameEncoder;
 import com.keuin.rdiffbackup.util.backup.incremental.ObjectCollection;
 
 import java.io.*;
@@ -31,13 +31,13 @@ public class IncBackupInfoSerializer {
                     return (SavedIncrementalBackup) o;
                 } else if (o instanceof ObjectCollection) {
                     // backward compatibility with old-style (v0) incremental backup
-                    BackupFileNameEncoder.BackupBasicInformation info = IncrementalBackupFileNameEncoder.INSTANCE.decode(file.getName());
+                    BackupFilenameEncoder.BackupBasicInformation info = IncrementalBackupFilenameEncoder.INSTANCE.decode(file.getName());
                     if (info == null)
                         throw new IOException("Invalid backup file name.");
                     return new SavedIncBackupV0(ObjectCollectionConverter.convert((ObjectCollection) o), info);
                 } else if (o instanceof ObjectCollection2) {
                     // compatible with 1.4.6 implementation
-                    BackupFileNameEncoder.BackupBasicInformation info = IncrementalBackupFileNameEncoder.INSTANCE.decode(file.getName());
+                    BackupFilenameEncoder.BackupBasicInformation info = IncrementalBackupFilenameEncoder.INSTANCE.decode(file.getName());
                     if (info == null)
                         throw new IOException("Invalid backup file name.");
                     return new SavedIncBackupV0((ObjectCollection2) o, info);
