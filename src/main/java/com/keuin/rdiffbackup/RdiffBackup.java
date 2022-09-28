@@ -7,7 +7,7 @@ import com.keuin.rdiffbackup.metadata.BackupMetadata;
 import com.keuin.rdiffbackup.metadata.MetadataHolder;
 import com.keuin.rdiffbackup.notification.DistinctNotifiable;
 import com.keuin.rdiffbackup.notification.NotificationManager;
-import com.keuin.rdiffbackup.ui.KBCommands;
+import com.keuin.rdiffbackup.ui.Commands;
 import com.keuin.rdiffbackup.util.DateUtil;
 import com.keuin.rdiffbackup.util.PrintUtil;
 import net.fabricmc.api.ModInitializer;
@@ -36,7 +36,7 @@ public final class RdiffBackup implements ModInitializer {
         System.out.println("Binding events and commands ...");
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            KBCommandsRegister.registerCommands(dispatcher);
+            CommandsRegister.registerCommands(dispatcher);
         });
         ServerLifecycleEvents.SERVER_STARTED.register(
                 this::onStartServer
@@ -57,7 +57,7 @@ public final class RdiffBackup implements ModInitializer {
         PrintUtil.setPlayerManager(server.getPlayerManager());
 
         // Initialize backup manager server reference
-        KBCommands.setServer(server);
+        Commands.setServer(server);
 
         // Update backup suggestion list
         BackupNameSuggestionProvider.setBackupSaveDirectory(BackupFilesystemUtil.getBackupSaveDirectory(server).getPath());

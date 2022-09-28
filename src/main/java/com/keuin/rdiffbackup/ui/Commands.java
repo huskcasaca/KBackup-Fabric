@@ -28,8 +28,7 @@ import java.util.List;
 import static com.keuin.rdiffbackup.backup.BackupFilesystemUtil.*;
 import static com.keuin.rdiffbackup.util.PrintUtil.*;
 
-public final class KBCommands {
-
+public final class Commands {
 
     private static final int SUCCESS = 1;
     private static final int FAILED = -1;
@@ -48,7 +47,7 @@ public final class KBCommands {
     //private static BackupMethod activatedBackupMethod = new PrimitiveBackupMethod(); // The backup method we currently using
 
     public static void setServer(MinecraftServer server) {
-        KBCommands.server = server;
+        Commands.server = server;
     }
 
     private static MinecraftServer getServer() {
@@ -74,12 +73,12 @@ public final class KBCommands {
     public static int help(CommandContext<ServerCommandSource> context) {
         // TODO: 28/9/22 add help menu
         msgInfo(context, "==== Rdiff Backup Manual ====");
-        msgInfo(context, "/kb , /kb help - Print help menu.");
-        msgInfo(context, "/kb list - Show all backups.");
-        msgInfo(context, "/kb backup [full/incremental] [backup_name] - Backup the whole level to backup_name. The default name is current system time.");
-        msgInfo(context, "/kb restore <backup_name> - Delete the whole current level and restore from given backup. /kb restore is identical with /kb list.");
-        msgInfo(context, "/kb confirm - Confirm and start restoring.");
-        msgInfo(context, "/kb cancel - Cancel the restoration to be confirmed. If cancelled, /kb confirm will not run.");
+        msgInfo(context, "/rdiff , /rdiff help - Print help menu.");
+        msgInfo(context, "/rdiff list - Show all backups.");
+        msgInfo(context, "/rdiff backup [full/incremental] [backup_name] - Backup the whole level to backup_name. The default name is current system time.");
+        msgInfo(context, "/rdiff restore <backup_name> - Delete the whole current level and restore from given backup. /rdiff restore is identical with /rdiff list.");
+        msgInfo(context, "/rdiff confirm - Confirm and start restoring.");
+        msgInfo(context, "/rdiff cancel - Cancel the restoration to be confirmed. If cancelled, /rdiff confirm will not run.");
         return SUCCESS;
     }
 
@@ -144,7 +143,7 @@ public final class KBCommands {
         updateBackupList();
         synchronized (backupList) {
             if (backupList.isEmpty())
-                msgInfo(context, "There is no backup available. To make a new backup, use `/kb backup`.");
+                msgInfo(context, "There is no backup available. To make a new backup, use `/rdiff backup`.");
             else
                 msgInfo(context, "Available backups:");
             for (int i = backupList.size() - 1; i >= 0; --i) {
@@ -155,7 +154,7 @@ public final class KBCommands {
 //                if (files.length != 0) {
 //                    msgInfo(context, "Available backups: (file is not checked, manipulation may affect this plugin)");
 //                } else {
-//                    msgInfo(context, "There are no available backups. To make a new backup, run /kb backup.");
+//                    msgInfo(context, "There are no available backups. To make a new backup, run /rdiff backup.");
 //                }
 //                int i = 0;
 //                for (File file : files) {
@@ -272,7 +271,7 @@ public final class KBCommands {
         //pendingOperation = AbstractConfirmableOperation.createDeleteOperation(context, backupName);
         pendingOperation = new DeleteOperation(context, backupFileName);
 
-        msgWarn(context, String.format("DELETION WARNING: The deletion is irreversible! You will lose the backup %s permanently. Use /kb confirm to start or /kb cancel to abort.", backupFileName), true);
+        msgWarn(context, String.format("DELETION WARNING: The deletion is irreversible! You will lose the backup %s permanently. Use /rdiff confirm to start or /rdiff cancel to abort.", backupFileName), true);
         return SUCCESS;
     }
 
@@ -319,7 +318,7 @@ public final class KBCommands {
 //        getBackupSaveDirectory(server).getAbsolutePath(), getLevelPath(server), backupFileName
             pendingOperation = new RestoreOperation(context, method);
 
-            msgWarn(context, String.format("RESET WARNING: You will LOSE YOUR CURRENT WORLD PERMANENTLY! The worlds will be replaced with backup %s . Use /kb confirm to start or /kb cancel to abort.", backupFileName), true);
+            msgWarn(context, String.format("RESET WARNING: You will LOSE YOUR CURRENT WORLD PERMANENTLY! The worlds will be replaced with backup %s . Use /rdiff confirm to start or /rdiff cancel to abort.", backupFileName), true);
             return SUCCESS;
         } catch (IOException e) {
             msgErr(context, String.format("An I/O exception occurred while making backup: %s", e));

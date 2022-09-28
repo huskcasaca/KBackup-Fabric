@@ -46,16 +46,16 @@ Supported Minecraft version: 1.14.4, 1.15.2, 1.16.4/1.16.5, 1.17.1, 1.18.1, **1.
 
 ## 2.1 Commands
 
-- **/kb**  or **/kb help**: show command list
-- **/kb list**: show existing backups
-- **/kb backup full \[backup_name\]**: make a backup with given name or with the current system time by default
-- **/kb backup incremental \[backup_name\]**: make an incremental backup which will be saved in `incremental` folder. (Incremental
+- **/rdiff**  or **/rdiff help**: show command list
+- **/rdiff list**: show existing backups
+- **/rdiff backup full \[backup_name\]**: make a backup with given name or with the current system time by default
+- **/rdiff backup incremental \[backup_name\]**: make an incremental backup which will be saved in `incremental` folder. (Incremental
   backup will create an index file which has an ext name of `.kbi`, and it will be saved in `backup` folder, which is
   the same with where `.zip` resides)
-- **/kb restore \<backup_name\>**: restore to a certain backup. This command needs a confirmation to execute.
-- **/kb confirm**: confirm executing restore operation. The operation is irreversible.
-- **/kb delete**: delete an existing backup.
-- **/kb recent**: Find and select the most recent backup file. After executing this command, you can use `/kb restore 1`
+- **/rdiff restore \<backup_name\>**: restore to a certain backup. This command needs a confirmation to execute.
+- **/rdiff confirm**: confirm executing restore operation. The operation is irreversible.
+- **/rdiff delete**: delete an existing backup.
+- **/rdiff recent**: Find and select the most recent backup file. After executing this command, you can use `/rdiff restore 1`
   to restore to this backup.
 
 Only OPs can make backups and restore by default.
@@ -63,18 +63,18 @@ Only OPs can make backups and restore by default.
 However, you can use permission management mods like [LuckPerms](https://luckperms.net/) to configure exactly what
 permissions normal players can use. Permission nodes of each command are listed below:
 
-| Command                | Permission Required |
-|------------------------|---------------------|
-| /kb                    | kb.root             |
-| /kb help               | kb.help             |
-| /kb list               | kb.list             |
-| /kb backup full        | kb.backup           |
-| /kb backup incremental | kb.backup           |
-| /kb restore            | kb.restore          |
-| /kb delete             | kb.delete           |
-| /kb confirm            | kb.confirm          |
-| /kb cancel             | kb.cancel           |
-| /kb recent             | kb.recent           |
+| Command                   | Permission Required |
+|---------------------------|---------------------|
+| /rdiff                    | rdiff.root          |
+| /rdiff help               | rdiff.help          |
+| /rdiff list               | rdiff.list          |
+| /rdiff backup full        | rdiff.backup        |
+| /rdiff backup incremental | rdiff.backup        |
+| /rdiff restore            | rdiff.restore       |
+| /rdiff delete             | rdiff.delete        |
+| /rdiff confirm            | rdiff.confirm       |
+| /rdiff cancel             | rdiff.cancel        |
+| /rdiff recent             | rdiff.recent        |
 
 ## 2.2 Script for auto-restart after restoring
 
@@ -128,7 +128,7 @@ Let's assume you are under Linux, run `crontab -e` and append this line to the c
 
 You can specify RCON port and password in `server.properties`.
 
-This will cause `cron` to run `/kb backup full` for every 6 hours. To make incremental backups, simply replace `full` to `incremental`.
+This will cause `cron` to run `/rdiff backup full` for every 6 hours. To make incremental backups, simply replace `full` to `incremental`.
 
 The man page [crontab(5)](https://man7.org/linux/man-pages/man5/crontab.5.html) also contains many useful information about using cron.
 
