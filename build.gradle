@@ -6,9 +6,9 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version + "-" + project.minecraft_version
-group = project.maven_group
+archivesBaseName = project.archivesBasename
+version = project.modVersion
+group = project.mavenGroup
 
 repositories {
 	maven {
@@ -21,12 +21,12 @@ dependencies {
 	implementation 'junit:junit:4.13.2'
 
 	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+	mappings "net.fabricmc:yarn:${project.yarnMappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loaderVersion}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}"
 }
 
 processResources {
@@ -51,7 +51,7 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.archivesBasename}"}
 	}
 }
 

@@ -82,7 +82,7 @@ Due to the nature of JVM: the Java language's running environment, there is no e
 in a server plugin. In order to auto restart after restoring, an outer system-based script is required, i.e. a batch or
 a shell script.
 
-KBackup exit JVM with a special code `111` after restoring the level successfully. The startup script just check the
+Rdiff Backup exit JVM with a special code `111` after restoring the level successfully. The startup script just check the
 exit code and restart Minecraft server if the code is `111`.
 
 I will give examples for some popular operating systems. To use these scripts, you should replace your start.bat or
@@ -114,7 +114,7 @@ done
 
 ## 2.3 Automatic Regular Backup
 
-Currently KBackup does not support automatic backup by itself. However, If application level scheduled tasks are available to you, such as *crontab* in Linux and *Task Scheduler* in Windows, you can use that to trigger backup tasks regularly.
+Currently Rdiff Backup does not support automatic backup by itself. However, If application level scheduled tasks are available to you, such as *crontab* in Linux and *Task Scheduler* in Windows, you can use that to trigger backup tasks regularly.
 
 ### 2.3.1 On Linux/macOS
 

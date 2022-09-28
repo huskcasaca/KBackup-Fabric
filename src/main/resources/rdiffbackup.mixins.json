@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.keuin.rdiffbackup.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PlayerManagerMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "verbose": true
+}

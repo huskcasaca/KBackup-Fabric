@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "id": "kbackupfabric",
+  "id": "rdiff-backup",
   "version": "${version}",
-  "name": "KBackup Fabric",
-  "description": "A simple backup mod for Minecraft fabric server",
+  "name": "Rdiff Backup",
+  "description": "A simple backup mod on server",
   "authors": [
-    "Keuin"
+    "Keuin", "Husk"
   ],
   "contact": {
     "homepage": "https://lab.keuin.cc/kbackup",
     "sources": "https://github.com/keuin"
   },
-  "license": "GPL V3",
-  "icon": "assets/kbackupfabric/icon.png",
+  "license": "GPLv3",
+  "icon": "assets/rdiffbackup/icon.png",
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.keuin.kbackupfabric.KBackup"
+      "com.keuin.rdiffbackup.RdiffBackup"
     ]
   },
   "mixins": [
-    "kbackupfabric.mixins.json"
+    "rdiffbackup.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.4",
